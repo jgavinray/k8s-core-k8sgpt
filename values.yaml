@@ -26,7 +26,14 @@ k8sgpt:
     # Options: openai, azureopenai, localai, amazonbedrock, google, cohere, ollama
     backend: openai
     # Model to use (e.g., gpt-4o-mini, gpt-3.5-turbo, gpt-4, etc.)
+    # For Ollama: llama2, mistral, codellama, etc.
     model: gpt-4o-mini
+    
+    # Base URL for external AI servers (e.g., Ollama, LocalAI)
+    # Example for external Ollama: "http://ollama-server.example.com:11434"
+    # Example for external LocalAI: "http://localai-server.example.com:8080"
+    # Leave empty for cloud providers (OpenAI, etc.)
+    baseUrl: ""
     
     # Secret configuration for API key
     secret:

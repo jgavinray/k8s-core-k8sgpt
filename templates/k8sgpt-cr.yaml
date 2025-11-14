@@ -12,6 +12,9 @@ spec:
     enabled: {{ .Values.k8sgpt.ai.enabled }}
     model: {{ .Values.k8sgpt.ai.model }}
     backend: {{ .Values.k8sgpt.ai.backend }}
+{{- if .Values.k8sgpt.ai.baseUrl }}
+    baseUrl: {{ .Values.k8sgpt.ai.baseUrl | quote }}
+{{- end }}
     secret:
       name: {{ .Values.k8sgpt.ai.secret.name }}
       key: {{ .Values.k8sgpt.ai.secret.key }}
