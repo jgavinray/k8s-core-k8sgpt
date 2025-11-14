@@ -45,6 +45,11 @@ k8sgpt:
   # Disable caching
   noCache: false
   
+  # Analysis interval (time between analysis runs)
+  # Format: ^[0-9]+[smh]$ (e.g., "30s", "5m", "1h")
+  analysis:
+    interval: "5m"
+  
   # Additional configuration
   # See https://docs.k8sgpt.ai/reference/operator/overview/ for more options
 

@@ -4,6 +4,9 @@ kind: K8sGPT
 metadata:
   name: {{ .Values.k8sgpt.name }}
   namespace: {{ .Values.k8sgpt.namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "15"
 spec:
   ai:
     enabled: {{ .Values.k8sgpt.ai.enabled }}
@@ -14,6 +17,10 @@ spec:
       key: {{ .Values.k8sgpt.ai.secret.key }}
   noCache: {{ .Values.k8sgpt.noCache }}
   version: {{ .Values.k8sgpt.version }}
+{{- if .Values.k8sgpt.analysis }}
+  analysis:
+    interval: {{ .Values.k8sgpt.analysis.interval | quote }}
+{{- end }}
 {{- end }}
 
 

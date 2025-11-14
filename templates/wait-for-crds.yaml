@@ -1,0 +1,55 @@
+{{- if .Values.k8sgpt.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-wait-for-crds
+  namespace: {{ .Values.k8sgpt.namespace }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    spec:
+      serviceAccountName: {{ .Release.Name }}-wait-for-crds
+      restartPolicy: OnFailure
+      containers:
+      - name: wait-for-crds
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "Waiting for K8sGPT CRDs to be installed and ready (60s timeout per CRD)..."
+          # Wait for CRDs to appear and be established (60s total timeout per CRD)
+          for crd in k8sgpts.core.k8sgpt.ai mutations.core.k8sgpt.ai results.core.k8sgpt.ai; do
+            echo "Waiting for CRD $crd (60s timeout)..."
+            # Wait for CRD to appear, then be established, with 60s total timeout
+            start_time=$(date +%s)
+            timeout=60
+            found=false
+            while [ $(($(date +%s) - start_time)) -lt $timeout ]; do
+              if kubectl get crd $crd >/dev/null 2>&1; then
+                if [ "$found" = false ]; then
+                  echo "CRD $crd found, waiting for it to be established..."
+                  found=true
+                fi
+                # Try to wait for established condition
+                if kubectl wait --for=condition=established --timeout=5s crd/$crd 2>/dev/null; then
+                  echo "CRD $crd is established!"
+                  break
+                fi
+              else
+                echo "CRD $crd not found yet..."
+              fi
+              sleep 2
+            done
+            elapsed=$(($(date +%s) - start_time))
+            if [ $elapsed -ge $timeout ]; then
+              echo "ERROR: CRD $crd did not become ready within 60s timeout"
+              exit 1
+            fi
+          done
+          echo "All CRDs are ready!"
+{{- end }}
+
