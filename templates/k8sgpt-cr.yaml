@@ -1,0 +1,19 @@
+{{- if .Values.k8sgpt.enabled }}
+apiVersion: core.k8sgpt.ai/v1alpha1
+kind: K8sGPT
+metadata:
+  name: {{ .Values.k8sgpt.name }}
+  namespace: {{ .Values.k8sgpt.namespace }}
+spec:
+  ai:
+    enabled: {{ .Values.k8sgpt.ai.enabled }}
+    model: {{ .Values.k8sgpt.ai.model }}
+    backend: {{ .Values.k8sgpt.ai.backend }}
+    secret:
+      name: {{ .Values.k8sgpt.ai.secret.name }}
+      key: {{ .Values.k8sgpt.ai.secret.key }}
+  noCache: {{ .Values.k8sgpt.noCache }}
+  version: {{ .Values.k8sgpt.version }}
+{{- end }}
+
+

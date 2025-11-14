@@ -1,0 +1,13 @@
+apiVersion: v2
+name: k8s-core-k8sgpt
+description: A Helm chart for deploying K8sGPT in Kubernetes using the official operator
+type: application
+version: 0.1.0
+appVersion: "v0.3.41"
+dependencies:
+  - name: k8sgpt-operator
+    version: ">=0.1.0"
+    repository: "https://charts.k8sgpt.ai/"
+    condition: k8sgpt-operator.enabled
+
+

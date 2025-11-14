@@ -1,0 +1,51 @@
+# Default values for k8sgpt-deployment
+# This chart wraps the official k8sgpt-operator chart
+
+# Enable/disable the k8sgpt-operator dependency
+k8sgpt-operator:
+  enabled: true
+  
+  # Override default values for the k8sgpt-operator chart
+  # See https://github.com/k8sgpt-ai/k8sgpt-operator for full list of options
+  
+  # Namespace configuration
+  namespace:
+    create: true
+    name: k8sgpt-operator-system
+
+# K8sGPT Custom Resource configuration
+# This will be deployed after the operator is installed
+k8sgpt:
+  enabled: true
+  name: k8sgpt
+  namespace: k8sgpt-operator-system
+  
+  # AI Provider Configuration
+  ai:
+    enabled: true
+    # Options: openai, azureopenai, localai, amazonbedrock, google, cohere, ollama
+    backend: openai
+    # Model to use (e.g., gpt-4o-mini, gpt-3.5-turbo, gpt-4, etc.)
+    model: gpt-4o-mini
+    
+    # Secret configuration for API key
+    secret:
+      name: k8sgpt-secret
+      key: openai-api-key
+      # Set this to true if you want the chart to create the secret
+      # You'll need to provide the API key value
+      create: false
+      # API key value (only used if create: true)
+      # WARNING: In production, use external secret management!
+      apiKey: ""
+  
+  # Version of k8sgpt to deploy
+  version: v0.3.41
+  
+  # Disable caching
+  noCache: false
+  
+  # Additional configuration
+  # See https://docs.k8sgpt.ai/reference/operator/overview/ for more options
+
+
