@@ -57,6 +57,32 @@ k8sgpt:
   analysis:
     interval: "5m"
   
+  # External Secret configuration for API service token
+  # Uses External Secrets Operator to sync secrets from external secret stores
+  externalSecret:
+    enabled: false
+    name: k8sgpt-api-token-secret
+    # SecretStore name (must exist in cluster)
+    secretStoreRef:
+      name: ""
+      kind: SecretStore  # or ClusterSecretStore
+    # Remote secret key/path in external store
+    remoteRef:
+      key: ""
+      property: ""  # Optional: specific property within the key
+    # Target secret configuration
+    target:
+      name: k8sgpt-api-token
+      namespace: k8sgpt-operator-system
+      creationPolicy: Owner
+      type: Opaque
+    # Secret data mapping
+    data:
+      - secretKey: api-token
+        remoteRef:
+          key: ""
+          property: ""
+  
   # Additional configuration
   # See https://docs.k8sgpt.ai/reference/operator/overview/ for more options
 
