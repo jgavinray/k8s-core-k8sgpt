@@ -24,16 +24,16 @@ k8sgpt:
   ai:
     enabled: true
     # Options: openai, azureopenai, localai, amazonbedrock, google, cohere, ollama
-    backend: openai
+    backend: localai
     # Model to use (e.g., gpt-4o-mini, gpt-3.5-turbo, gpt-4, etc.)
     # For Ollama: llama2, mistral, codellama, etc.
-    model: gpt-4o-mini
+    model: gpt-oss
     
     # Base URL for external AI servers (e.g., Ollama, LocalAI)
     # Example for external Ollama: "http://ollama-server.example.com:11434"
     # Example for external LocalAI: "http://localai-server.example.com:8080"
     # Leave empty for cloud providers (OpenAI, etc.)
-    baseUrl: ""
+    baseUrl: "http://10.10.100.10:11434/v1"
     
     # Secret configuration for API key
     secret:
@@ -41,7 +41,7 @@ k8sgpt:
       key: openai-api-key
       # Set this to true if you want the chart to create the secret
       # You'll need to provide the API key value
-      create: false
+      create: true
       # API key value (only used if create: true)
       # WARNING: In production, use external secret management!
       apiKey: ""
@@ -55,7 +55,7 @@ k8sgpt:
   # Analysis interval (time between analysis runs)
   # Format: ^[0-9]+[smh]$ (e.g., "30s", "5m", "1h")
   analysis:
-    interval: "5m"
+    interval: "30s"
   
   # External Secret configuration for API service token
   # Uses External Secrets Operator to sync secrets from external secret stores
