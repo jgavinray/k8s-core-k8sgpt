@@ -1,0 +1,47 @@
+{{- if and .Values.k8sgpt.enabled .Values.cleanup.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-cleanup
+  namespace: {{ .Values.k8sgpt.namespace }}
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 3
+  template:
+    metadata:
+      name: {{ .Release.Name }}-cleanup
+    spec:
+      serviceAccountName: {{ .Release.Name }}-cleanup
+      restartPolicy: OnFailure
+      containers:
+      - name: cleanup
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/bash
+        - -c
+        - |
+          set -e
+          echo "Starting cleanup process..."
+
+          {{- if .Values.cleanup.deleteCRs }}
+          # Delete all K8sGPT custom resources first
+          echo "Deleting K8sGPT custom resources..."
+          kubectl delete k8sgpts.core.k8sgpt.ai --all --all-namespaces --ignore-not-found=true --timeout=60s || true
+          kubectl delete results.core.k8sgpt.ai --all --all-namespaces --ignore-not-found=true --timeout=60s || true
+          kubectl delete mutations.core.k8sgpt.ai --all --all-namespaces --ignore-not-found=true --timeout=60s || true
+          {{- end }}
+
+          {{- if .Values.cleanup.deleteCRDs }}
+          # Delete CRDs
+          echo "Deleting K8sGPT CRDs..."
+          kubectl delete crd k8sgpts.core.k8sgpt.ai --ignore-not-found=true --timeout=60s || true
+          kubectl delete crd results.core.k8sgpt.ai --ignore-not-found=true --timeout=60s || true
+          kubectl delete crd mutations.core.k8sgpt.ai --ignore-not-found=true --timeout=60s || true
+          {{- end }}
+
+          echo "Cleanup completed successfully"
+{{- end }}

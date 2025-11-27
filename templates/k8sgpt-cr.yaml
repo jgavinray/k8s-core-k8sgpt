@@ -18,6 +18,16 @@ spec:
     secret:
       name: {{ .Values.k8sgpt.ai.secret.name }}
       key: {{ .Values.k8sgpt.ai.secret.key }}
+{{- if .Values.k8sgpt.ai.autoRemediation }}
+    autoRemediation:
+      enabled: {{ .Values.k8sgpt.ai.autoRemediation.enabled }}
+{{- if .Values.k8sgpt.ai.autoRemediation.resources }}
+      resources:
+{{- range .Values.k8sgpt.ai.autoRemediation.resources }}
+      - {{ . }}
+{{- end }}
+{{- end }}
+{{- end }}
   noCache: {{ .Values.k8sgpt.noCache }}
   version: {{ .Values.k8sgpt.version }}
 {{- if .Values.k8sgpt.analysis }}

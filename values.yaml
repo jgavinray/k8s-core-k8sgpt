@@ -23,18 +23,23 @@ k8sgpt:
   # AI Provider Configuration
   ai:
     enabled: true
-    # Options: openai, azureopenai, localai, amazonbedrock, google, cohere, ollama
-    backend: localai
-    # Model to use (e.g., gpt-4o-mini, gpt-3.5-turbo, gpt-4, etc.)
-    # For Ollama: llama2, mistral, codellama, etc.
-    model: gpt-oss
-    
-    # Base URL for external AI servers (e.g., Ollama, LocalAI)
-    # Example for external Ollama: "http://ollama-server.example.com:11434"
-    # Example for external LocalAI: "http://localai-server.example.com:8080"
-    # Leave empty for cloud providers (OpenAI, etc.)
-    baseUrl: "http://10.10.100.10:11434/v1"
-    
+    # Options: openai, azureopenai, localai, amazonbedrock, google, cohere
+    # Note: For Ollama, use backend: openai with baseUrl pointing to Ollama's OpenAI-compatible endpoint
+    # The k8sgpt CRD does not support 'ollama' as a backend value
+    backend: openai
+
+    # Model to use
+    # For OpenAI: gpt-4o-mini, gpt-3.5-turbo, gpt-4, gpt-4-turbo
+    # For Ollama: llama2, mistral, codellama, or custom models (e.g., gpt-oss:120b)
+    model: gpt-oss:120b
+
+    # Base URL for external AI servers (Ollama, LocalAI)
+    # For Ollama: "http://your-ollama-server:11434/v1" (NO trailing slash)
+    # For LocalAI: "http://your-localai-server:8080/v1"
+    # Leave empty for cloud providers (OpenAI, Azure OpenAI, etc.)
+    # IMPORTANT: Remove trailing slash from URL to avoid API path construction issues
+    baseUrl: "http://192.168.0.33:11434/v1"
+
     # Secret configuration for API key
     secret:
       name: k8sgpt-secret
@@ -45,6 +50,19 @@ k8sgpt:
       # API key value (only used if create: true)
       # WARNING: In production, use external secret management!
       apiKey: ""
+
+    # Auto-Remediation Configuration
+    # WARNING: Auto-remediation will automatically attempt to fix detected issues in your cluster
+    # DISABLED by default for safety - only enable in non-production environments or after thorough testing
+    autoRemediation:
+      enabled: false
+      # Resource types that are eligible for auto-remediation
+      # Options: Pod, Deployment, Service, Ingress
+      resources:
+        - Pod
+        - Deployment
+        - Service
+        - Ingress
   
   # Version of k8sgpt to deploy
   version: v0.3.41
@@ -85,5 +103,16 @@ k8sgpt:
   
   # Additional configuration
   # See https://docs.k8sgpt.ai/reference/operator/overview/ for more options
+
+# Cleanup configuration
+# Controls automatic cleanup of resources during helm uninstall
+cleanup:
+  # Enable cleanup job on helm uninstall
+  enabled: true
+  # Delete all K8sGPT custom resources before uninstalling
+  deleteCRs: true
+  # Delete CRDs (WARNING: This will delete ALL k8sgpt CRDs from the cluster)
+  # Set to false in production environments with shared CRDs
+  deleteCRDs: true
 
 
