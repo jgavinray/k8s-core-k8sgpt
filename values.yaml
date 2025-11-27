@@ -73,7 +73,7 @@ k8sgpt:
   # Analysis interval (time between analysis runs)
   # Format: ^[0-9]+[smh]$ (e.g., "30s", "5m", "1h")
   analysis:
-    interval: "30s"
+    interval: "5m"
   
   # External Secret configuration for API service token
   # Uses External Secrets Operator to sync secrets from external secret stores
