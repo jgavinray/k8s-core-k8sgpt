@@ -10,8 +10,8 @@ metadata:
 spec:
   ai:
     enabled: {{ .Values.k8sgpt.ai.enabled }}
-    model: {{ .Values.k8sgpt.ai.model }}
-    backend: {{ .Values.k8sgpt.ai.backend }}
+    model: {{ .Values.k8sgpt.ai.model | quote }}
+    backend: {{ .Values.k8sgpt.ai.backend | quote }}
 {{- if .Values.k8sgpt.ai.baseUrl }}
     baseUrl: {{ .Values.k8sgpt.ai.baseUrl | quote }}
 {{- end }}
@@ -24,7 +24,7 @@ spec:
 {{- if .Values.k8sgpt.ai.autoRemediation.resources }}
       resources:
 {{- range .Values.k8sgpt.ai.autoRemediation.resources }}
-      - {{ . }}
+        - {{ . }}
 {{- end }}
 {{- end }}
 {{- end }}
